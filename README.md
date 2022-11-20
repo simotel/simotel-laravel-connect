@@ -83,16 +83,6 @@ Simotel API helps you to connect to simotel server and manage simotel users, que
 ```php
 use Simotel\Laravel\Facade\Simotel;
 
-$config = Simotel::getDefaultConfig();
-$config["simotelApi"]= [
-        'api_auth' => 'both', // simotel api authentication: basic,token,both 
-        'api_user' => 'apiUser',
-        'api_pass' => 'apiPass',
-        'api_token' => 'apiToken',
-        'server_address' => 'http://simotelServer/api/v4',
-    ],
-
-
 // The data will be sent to Simotel server as request body
 $data = [
     "alike"=>false,
