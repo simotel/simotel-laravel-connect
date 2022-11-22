@@ -150,14 +150,296 @@ Here is the list of Simotel Event classes that you can use:
 | VoiceMail     | Nasim\Simotel\Laravel\Events\SimotelEventVoiceMail::class     |
 | VoiceMailEmail| Nasim\Simotel\Laravel\Events\SimotelEventVoiceMailEmail::class|
 
-Now, you must dispatch Simotel events in router
+Now, you must dispatch Simotel events in router:
 ```php
-/// routes/api.php
+// routes/api.php
 
 Route::get("/eventApi",function(){
     Simotel::eventApi()->dispatch(request()->all());
 })
 ```
+### Simotel Smart API
+> We recommend you to study [Simotel SmartApi documents](https://doc.mysup.ir/docs/api/callcenter_api/APIComponents/smart_api) first.
+
+#### 1. create smartApp classes and methods that called by smart api apps
+
+```php
+namespace \App\SimotelSmartApps;
+
+use Simotel\SmartApi\Commands;
+
+class PlayWelcomeAnnounce
+{
+    use Commands;
+    
+    public function playAnnounceApp($appData)
+    {
+        $this->cmdPlayAnnouncement("announcement file name");
+        return $this->okResponse();
+        // return: {'ok':1,'commands':'PlayAnnouncement('announcement file name')'}
+    }
+}
+```
+```php
+namespace \App\SimotelSmartApps;
+
+class RestOfApps
+{
+    use SmartApiCommands;
+    
+    public function sayClock($appData)
+    {
+        $this->cmdSayClock("14:00");
+        return $this->makeOkResponse();
+        // return: {'ok':1,'commands':'SayClock("14:00")'} 
+    }
+
+    public function interactiveApp($appData)
+    {
+        if($appData["data"]=="1")
+            return $this->makeOkResponse();
+            // return: {'ok':1}
+
+        if($appData["data"]=="2")
+            return $this->makeNokResponse();
+            // return: {'ok':0}
+    }
+}
+
+```
+> Don't forget to `use` [ Simotel\SmartApi\Commands](https://github.com/nasimtelecom/simotel-php-connect/blob/main/src/SmartApi/Commands.php) trait in your class.
+
+
+### 2. customize simotel config
+```php
+// config/laravel-simotel.php
+
+ 'smartApi' => [
+        'apps' => [
+            'playAnnounce' => \App\SimotelSmartApps\PlayWelcomeAnnounce::class,
+            '*' => \App\SimotelSmartApps\RestOfApps::class,
+        ],
+    ],
+
+```
+
+#### 3. handle received request from simotel smart api
+
+```php
+Route::get("smartApi",function(){
+    Simotel::smartApi()->call(request()->all());
+})
+$config = Simotel::getDefaultConfig();
+$config["smartApi"]["apps"] = [
+  'playWelcomeMessage' => PlayWelcomeMessage::class,
+  '*' => RestOfApps::class,
+];
+
+// place this codes where you want grab income requests
+// from simotel smartApi calls     
+$simotel = new Simotel($config);
+$appData = $_POST["app_data"];
+$jsonResponse = $simotel->smartApi($appData)->toJson();
+
+header('Content-Type: application/json; charset=utf-8');
+echo $jsonResponse;
+
+/*
+ if app_name='playAnnounceApp' 
+	 jsonResponse = {'ok':1,'commands':'PlayAnnouncement('announcement file name')'}
+
+ if app_name='sayClock' 
+	 jsonResponse = {'ok':1,'commands':'SayClock("14:00")'}
+
+ if app_name='interactiveApp' 
+	 if data=1 
+		 jsonResponse = {'ok':1}
+	 if data=2 
+		 jsonResponse = {'ok':0}
+*/
+```
+
+there are commands that you can use in your SmartApp classes:
+
+```php
+cmdPlayAnnouncement($announceFilename);
+cmdPlayback($announceFilename);
+cmdExit($exit);
+cmdGetData($announceFilename, $timeout, $digitsCount);
+cmdSayDigit($number);
+cmdSayNumber($number);
+cmdSayClock($clock);
+cmdSayDate($date,$calender);
+cmdSayDuration($duration);
+cmdSetExten($exten, $clearUserData = true);
+cmdSetLimitOnCall($seconds);
+cmdClearUserData();
+cmdMusicOnHold();
+```
+
+### Simotel Trunk API
+> We recommend you to study [Simotel Trunk API documents](https://doc.mysup.ir/docs/api/callcenter_api/APIComponents/trunk_api) first.
+
+#### 1. create TrunkApp classe and methods
+
+```php
+
+class SelectTrunk
+{
+    public function selectTrunk($appData)
+    {
+        if(/* some conditions */)
+            return [
+                "trunk" => "trunk1",
+                "extension" => "extension1",
+                "call_limit" => "300"
+            ];
+        
+        //else
+        return [
+            "trunk" => "trunk2",
+            "extension" => "extension2",
+            "call_limit" => "400"
+        ];
+    }
+}
+
+
+```
+
+#### 2. handle received request from Simotel Trunk API
+
+```php
+$config = Simotel::getDefaultConfig();
+$config["trunkApi"]["apps"] = [
+  'selectTrunk' => SelectTrunk::class,
+];
+
+// place this codes where you want grab income requests
+// from simotel smartApi calls     
+$simotel = new Simotel($config);
+$appData = $_POST["app_data"];
+$jsonResponse = $simotel->trunkApi($appData)->toJson();
+
+header('Content-Type: application/json; charset=utf-8');
+echo $jsonResponse;
+
+/*
+    if some conditions then 
+		 jsonResponse = {
+            "ok": "1",             
+            "trunk": "trunk1",
+            "extension": "extension1",
+            "call_limit": "300"
+        }
+	 else 
+		jsonResponse = {
+            "ok": "1",             
+            "trunk": "trunk2",
+            "extension": "extension2",
+            "call_limit": "400"
+        }
+*/
+```
+
+### Simotel Extension API
+> We recommend you to study [Simotel Extension API documents](https://doc.mysup.ir/docs/api/callcenter_api/APIComponents/exten_api) first.
+
+
+
+#### 1. create Extension API class and methods
+
+```php
+
+class SelectExtension
+{
+    public function selectExtension($appData)
+    {
+        if(/* some conditions */)
+            return "ext1";
+        
+        //else
+            return "ext2";
+    }
+}
+
+
+```
+
+#### 2. handle received request from Simotel Extension API
+
+```php
+$config = Simotel::getDefaultConfig();
+$config["extensionApi"]["apps"] = [
+  'selectExtension' => SelectExtension::class,
+];
+
+// place this codes where you want grab income requests
+// from simotel extensionApi calls     
+$simotel = new Simotel($config);
+$appData = $_POST["app_data"];
+$jsonResponse = $simotel->extensionApi($appData)->toJson();
+
+header('Content-Type: application/json; charset=utf-8');
+echo $jsonResponse;
+
+/*
+    if some conditions then 
+		 jsonResponse = {"ok": "1", "extension": "ext1"}
+	 else 
+		 jsonResponse = {"ok": "1", "extension": "ext2"}
+*/
+```
+
+### Simotel Ivr API
+> We recommend you to study [Simotel Ivr API documents](https://doc.mysup.ir/docs/api/callcenter_api/APIComponents/ivr_api) first.
+
+
+#### 1. create Ivr API class and methods
+
+```php
+
+class SelectIvrCase
+{
+    public function selectCase($appData)
+    {
+        if(/* some conditions */)
+            return "1";
+        
+        //else
+            return "2";
+    }
+}
+
+
+```
+
+#### 2. handle received request from Simotel Ivr API
+
+```php
+$config = Simotel::getDefaultConfig();
+$config["ivrApi"]["apps"] = [
+  'selectCase' => SelectIvrCase::class,
+];
+
+// place this codes where you want grab income requests
+// from simotel ivrApi calls     
+$simotel = new Simotel($config);
+$appData = $_POST["app_data"];
+$jsonResponse = $simotel->ivrApi($appData)->toJson();
+
+header('Content-Type: application/json; charset=utf-8');
+echo $jsonResponse;
+
+/*
+    if some conditions then 
+		 jsonResponse = {"ok": "1", "case": "1"}
+	 else 
+		 jsonResponse = {"ok": "1", "case": "2"}
+*/
+```
+
+
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has been changed recently.
