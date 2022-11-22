@@ -129,8 +129,35 @@ if(!$res->isSuccess())
 $users = $res->getData();
 
 ```
+### Simotel Event Api
 
+You can use  our predefined SimotelEvents in EventServiceProvider to associate with listeners.
 
+Here is the list of Simotel Event classes that you can use:
+
+| Event Name    | Simotel Event Class                                           |
+|     ---       |        ---                                                    |
+| Cdr           | Nasim\Simotel\Laravel\Events\SimotelEventCdr::class           |
+| CdrQueue      | Nasim\Simotel\Laravel\Events\SimotelEventCdrQueue::class      |
+| ExtenAdded    | Nasim\Simotel\Laravel\Events\SimotelEventExtenAdded::class    |
+| ExtenRemoved  | Nasim\Simotel\Laravel\Events\SimotelEventExtenRemoved::class  |
+| IncomingCall  | Nasim\Simotel\Laravel\Events\SimotelEventIncomingCall::class  |
+| IncomingFax   | Nasim\Simotel\Laravel\Events\SimotelEventIncomingFax::class   |
+| NewState      | Nasim\Simotel\Laravel\Events\SimotelEventNewState::class      |
+| OutgoingCall  | Nasim\Simotel\Laravel\Events\SimotelEventOutgoingCall::class  |
+| Survey        | Nasim\Simotel\Laravel\Events\SimotelEventSurvey::class        |
+| Transfer      | Nasim\Simotel\Laravel\Events\SimotelEventTransfer::class      |
+| VoiceMail     | Nasim\Simotel\Laravel\Events\SimotelEventVoiceMail::class     |
+| VoiceMailEmail| Nasim\Simotel\Laravel\Events\SimotelEventVoiceMailEmail::class|
+
+Now, you must dispatch Simotel events in router
+```php
+/// routes/api.php
+
+Route::get("/eventApi",function(){
+    Simotel::eventApi()->dispatch(request()->all());
+})
+```
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has been changed recently.
