@@ -1,5 +1,2 @@
-/vendor/
-.idea/vcs.xml
-.idea/simotel-laravel-connect.iml
-.idea/php.xml
-.idea/modules.xml
+vendor
+.phpunit.result.cache
