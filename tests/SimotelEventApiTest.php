@@ -15,7 +15,7 @@ class SimotelEventApiTest extends TestCase
 
         $events = [
             "Cdr", "NewState", "IncomingCall", "OutgoingCall", "Transfer", "ExtenAdded", "ExtenRemoved",
-            "IncomingFax", "IncomingFax", "CdrQueue", "VoiceMail", "VoiceMailEmail", "Survey"
+            "IncomingFax", "IncomingFax", "CdrQueue", "VoiceMail", "VoiceMailEmail", "Survey", "Ping"
         ];
 
         foreach ($events as $event) {

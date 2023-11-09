@@ -55,7 +55,7 @@ class SimotelLaravelServiceProvider extends ServiceProvider
 
         $events = [
             "Cdr", "NewState", "IncomingCall", "OutgoingCall", "Transfer", "ExtenAdded", "ExtenRemoved",
-            "IncomingFax", "IncomingFax", "CdrQueue", "VoiceMail", "VoiceMailEmail", "Survey"
+            "IncomingFax", "IncomingFax", "CdrQueue", "VoiceMail", "VoiceMailEmail", "Survey", "Ping"
         ];
 
 
