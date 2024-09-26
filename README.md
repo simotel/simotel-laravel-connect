@@ -5,7 +5,7 @@
 > [simotel/simotel-php-connect](https://github.com/simotel/simotel-php-connect)
 
 Keep connected with Simotel by Laravel. Simotel is a wonderful call center software with huge abilities.
-visit **[simotel](https://simotel.com/)** documents here: [doc.mysup.ir](https://doc.mysup.ir/)
+visit **[simotel](https://simotel.com/)** documents here: [wiki.simotel.com](https://wiki.simotel.com/)
 
 With this package you can easly connect to **[simotel](https://simotel.com/)** server by laravel and do somethings amazing.
 
