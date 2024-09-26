@@ -2,7 +2,7 @@
 
 > ### PHP Package
 > connect to simotel with simotel-php-connect:
-> [nasimtelecom/simotel-php-connect](https://github.com/nasimtelecom/simotel-php-connect)
+> [simotel/simotel-php-connect](https://github.com/simotel/simotel-php-connect)
 
 Keep connected with Simotel by Laravel. Simotel is a wonderful call center software with huge abilities.
 visit **[simotel](https://simotel.com/)** documents here: [doc.mysup.ir](https://doc.mysup.ir/)
