@@ -1,4 +1,4 @@
-# simotel-php-connect
+# simotel-laravel-connect
 
 > ### PHP Package
 > connect to simotel with simotel-php-connect:
